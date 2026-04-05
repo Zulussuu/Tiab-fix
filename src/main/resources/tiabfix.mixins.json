@@ -1,0 +1,16 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.tiabfix.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "refmap": "tiabfix.refmap.json",
+    "mixins": [
+        "TiabItemMixin",
+        "TimeAcceleratorEntityMixin",
+        "AE2BaseBlockMixin"
+    ],
+    "client": [],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}
