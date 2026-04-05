@@ -1,0 +1,50 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'eclipse'
+    id 'net.neoforged.moddev' version '2.0.42-beta'
+}
+
+version = '1.0.3'
+group = 'com.tiabfix'
+
+base {
+    archivesName = "tiab-entity-fix"
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://maven.neoforged.net/releases/' }
+    maven {
+        name = "Curse Maven"
+        url = "https://cursemaven.com"
+    }
+}
+
+neoForge {
+    version = "21.1.83"
+
+    mods {
+        tiabfix {
+            sourceSet sourceSets.main
+        }
+    }
+    
+    runs {
+        client {
+            client()
+        }
+        server {
+            server()
+        }
+    }
+}
+
+dependencies {
+    implementation files('libs/tiab.jar')
+    compileOnly files('libs/Jade-1.21.1-NeoForge-15.10.3.jar')
+    compileOnly files('libs/theoneprobe-1.21_neo-12.0.8.jar')
+}
+
