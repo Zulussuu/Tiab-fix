@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Specification-Title: Time In A Bottle
-Specification-Vendor: RealMangoRage, MangoRage
-Specification-Version: 6.5.3
-Implementation-Title: neoforge
-Implementation-Version: 6.5.3
-Implementation-Vendor: RealMangoRage, MangoRage
-Built-On-Minecraft: 1.21.1
-
