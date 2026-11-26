@@ -5,7 +5,7 @@ plugins {
     id 'net.neoforged.moddev' version '2.0.42-beta'
 }
 
-version = '1.0.3'
+version = '1.0.4'
 group = 'com.tiabfix'
 
 base {
@@ -24,7 +24,7 @@ repositories {
 }
 
 neoForge {
-    version = "21.1.83"
+    version = "21.1.267"
 
     mods {
         tiabfix {
@@ -44,6 +44,12 @@ neoForge {
 
 dependencies {
     implementation files('libs/tiab.jar')
+    runtimeOnly 'curse.maven:jei-238222:8932766'
+    runtimeOnly 'curse.maven:applied-energistics-2-223794:9676922'
+    runtimeOnly 'curse.maven:ex-pattern-provider-892005:9391213'
+    runtimeOnly 'curse.maven:guideme-1173950:9366366'
+    runtimeOnly 'curse.maven:glodium-957920:5821676'
+    runtimeOnly files('libs/Jade-1.21.1-NeoForge-15.10.3.jar')
     compileOnly files('libs/Jade-1.21.1-NeoForge-15.10.3.jar')
     compileOnly files('libs/theoneprobe-1.21_neo-12.0.8.jar')
 }

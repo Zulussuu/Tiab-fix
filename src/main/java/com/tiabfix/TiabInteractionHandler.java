@@ -84,6 +84,7 @@ public class TiabInteractionHandler {
             return;
         if (player.level().isClientSide())
             return;
+        if (!(target instanceof AgeableMob)) return;
         if (event.getHand() != InteractionHand.MAIN_HAND)
             return;
 
@@ -115,10 +116,10 @@ public class TiabInteractionHandler {
                 continue;
             }
 
-            PacketDistributor.sendToAllPlayers(
+            if (data.remainingTicks % 20 == 0) PacketDistributor.sendToPlayersTrackingEntity(entity,
                     new SyncEntityAccelPayload(entity.getId(), data.timeRate, data.remainingTicks));
 
-            for (int i = 0; i < data.timeRate; i++) {
+            for (int i = 0; i < data.timeRate * 2 - 1; i++) {
                 if (entity instanceof AgeableMob ageable) {
                     int age = ageable.getAge();
                     if (age < 0) {
@@ -126,20 +127,19 @@ public class TiabInteractionHandler {
                     } else if (age > 0) {
                         ageable.setAge(age - 1);
                     }
-                } else {
-                    entity.tick();
                 }
             }
 
             data.remainingTicks--;
             if (data.remainingTicks <= 0) {
-                PacketDistributor.sendToAllPlayers(new SyncEntityAccelPayload(entity.getId(), 0, 0));
+                PacketDistributor.sendToPlayersTrackingEntity(entity, new SyncEntityAccelPayload(entity.getId(), 0, 0));
                 iterator.remove();
             }
         }
     }
 
     private static void handleDurationCycle(Player player, ItemStack stack) {
+        if (!player.level().isClientSide()) return;
         if (!(stack.getItem() instanceof ITiabItem))
             return;
         if (!isUnlimitedTiab(stack))
@@ -172,16 +172,16 @@ public class TiabInteractionHandler {
         int energyRequired;
         boolean isCreativeMode = player.isCreative();
 
-        DurationComponent durationComp = stack.getOrDefault(ModComponents.DURATION.get(), new DurationComponent(30));
-        int totalTicks = durationComp.getTicks();
+        DurationComponent durationComp = stack.getOrDefault(ModComponents.DURATION.get(), new DurationComponent(cfg.EACH_USE_DURATION()));
+        int totalTicks = isUnlimitedTiab(stack) ? durationComp.getTicks() : cfg.TICKS_CONST() * cfg.EACH_USE_DURATION();
 
         if (existing != null) {
             int currentRate = existing.timeRate;
-            if (currentRate >= 256) {
+            if (currentRate >= (int) Math.pow(2, cfg.MAX_RATE_MULTI() - 1)) {
                 return;
             }
             nextRate = currentRate * 2;
-            energyRequired = 20 * 30 * nextRate;
+            energyRequired = cfg.TICKS_CONST() * cfg.EACH_USE_DURATION() * nextRate / 2;
 
             if (!canUse(stack, isCreativeMode, energyRequired)) {
                 return;
@@ -189,11 +189,11 @@ public class TiabInteractionHandler {
 
             existing.timeRate = nextRate;
             int remaining = existing.remainingTicks;
-            int added = (totalTicks - remaining) / 2;
+            int added = Math.max(0, totalTicks - remaining) / 2;
             existing.remainingTicks += added;
         } else {
             nextRate = 1;
-            energyRequired = 20 * 30;
+            energyRequired = cfg.TICKS_CONST() * cfg.EACH_USE_DURATION();
 
             if (!canUse(stack, isCreativeMode, energyRequired)) {
                 return;
@@ -205,11 +205,11 @@ public class TiabInteractionHandler {
 
         consumeTime(player, stack, energyRequired);
 
-        PacketDistributor.sendToAllPlayers(
+        PacketDistributor.sendToPlayersTrackingEntity(target, 
                 new SyncEntityAccelPayload(target.getId(), existing.timeRate, existing.remainingTicks));
 
         player.displayClientMessage(
-                Component.literal("Entity accelerated: x" + nextRate).withStyle(ChatFormatting.GREEN),
+                Component.literal("Entity accelerated: x" + (nextRate * 2)).withStyle(ChatFormatting.GREEN),
                 true);
     }
 
@@ -235,9 +235,12 @@ public class TiabInteractionHandler {
         stack.set(comp, new StoredTimeComponent(Math.max(0, current.stored() - cost), current.total()));
     }
 
-    private static boolean isUnlimitedTiab(ItemStack stack) {
+    public static boolean isUnlimitedTiab(ItemStack stack) {
+        if (stack.getItem() instanceof com.tiabfix.core.UnlimitedTiabItem) return true;
         var comp = ICommonTimeInABottleAPI.COMMON_API.get().getRegistration().getStoredTime();
         StoredTimeComponent stored = (StoredTimeComponent) stack.getOrDefault(comp, new StoredTimeComponent(0, 0));
         return stored.stored() >= Integer.MAX_VALUE - 1000;
     }
 }
+
+

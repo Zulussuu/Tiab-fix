@@ -5,7 +5,7 @@ issueTrackerURL = ""
 
 [[mods]]
 modId = "tiabfix"
-version = "1.0.0"
+version = "1.0.4"
 displayName = "TIAB Entity Fix"
 description = '''Fixes the Time in a Bottle stacked block acceleration issue.'''
 authors = "zulu"
@@ -30,6 +30,7 @@ side = "BOTH"
 [[dependencies.tiabfix]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21.1,)"
+versionRange = "[1.21.1,1.22)"
 ordering = "NONE"
 side = "BOTH"
+

@@ -12,7 +12,7 @@ public class PacketHandler {
         context.enqueueWork(() -> {
             var player = context.player();
             var stack = player.getMainHandItem();
-            if (stack.getItem() instanceof ITiabItem) {
+            if (stack.getItem() instanceof ITiabItem && com.tiabfix.config.TiabFixConfig.enableDurationCycling && com.tiabfix.TiabInteractionHandler.isUnlimitedTiab(stack) && java.util.Arrays.stream(DurationComponent.DURATIONS).anyMatch(v -> v == payload.durationSeconds())) {
                 stack.set(ModComponents.DURATION.get(), new DurationComponent(payload.durationSeconds()));
             }
         });
@@ -29,3 +29,4 @@ public class PacketHandler {
         });
     }
 }
+

@@ -22,6 +22,7 @@ public class TiabEntityFix {
     public TiabEntityFix(IEventBus modBus, ModContainer modContainer) {
         modContainer.registerConfig(ModConfig.Type.COMMON, TiabFixConfig.SPEC);
         ModComponents.register(modBus);
+        com.tiabfix.core.ModItems.register(modBus);
         modBus.addListener(this::registerNetworking);
         modBus.addListener(this::sendIMC);
         NeoForge.EVENT_BUS.register(this);
@@ -47,6 +48,6 @@ public class TiabEntityFix {
     }
 
     private void sendIMC(final InterModEnqueueEvent event) {
-        InterModComms.sendTo("theoneprobe", "getTheOneProbe", com.tiabfix.compat.TOPCompat::new);
+        if (net.neoforged.fml.ModList.get().isLoaded("theoneprobe")) InterModComms.sendTo("theoneprobe", "getTheOneProbe", com.tiabfix.compat.TOPCompat::new);
     }
 }

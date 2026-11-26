@@ -45,9 +45,7 @@ public abstract class TiabItemMixin {
 
     @Overwrite(remap = false)
     public InteractionResult useOn(UseOnContext context) {
-        if (!TiabFixConfig.enableCropAcceleration) {
-            return InteractionResult.PASS;
-        }
+
 
         Level level = context.getLevel();
         var cfg = ICommonTimeInABottleAPI.COMMON_API.get().getConfig();
@@ -69,6 +67,7 @@ public abstract class TiabItemMixin {
                 .findFirst();
 
         boolean hasExistingAccelerator = existingEntity.isPresent();
+        if (targetTE == null && !blockState.isRandomlyTicking()) return InteractionResult.FAIL;
 
         if (!hasExistingAccelerator) {
             if (blockState.is(ICommonTimeInABottleAPI.COMMON_API.get().getTagKey())) {
@@ -79,7 +78,7 @@ public abstract class TiabItemMixin {
         int nextRate = 1;
         int duration = getCustomDuration(stack);
         int energyRequired = getEnergyCost(nextRate);
-        boolean isCreativeMode = player != null && player.isCreative();
+        boolean isCreativeMode = (player != null && player.isCreative()) || com.tiabfix.TiabInteractionHandler.isUnlimitedTiab(stack);
 
         if (hasExistingAccelerator) {
             ITimeAcceleratorEntity entityTA = existingEntity.get();
@@ -98,8 +97,8 @@ public abstract class TiabItemMixin {
             }
 
             entityTA.setTimeRate(nextRate);
-            int timeAdded = (duration - entityTA.getRemainingTime()) / 2;
-            entityTA.setRemainingTime(entityTA.getRemainingTime() + timeAdded);
+            int timeAdded = Math.max(0, duration - entityTA.getRemainingTime()) / 2;
+            entityTA.setRemainingTime(com.tiabfix.TiabInteractionHandler.isUnlimitedTiab(stack) ? duration : entityTA.getRemainingTime() + timeAdded);
         } else {
             if (!canUse(stack, isCreativeMode, energyRequired)) {
                 return InteractionResult.SUCCESS;
@@ -126,3 +125,4 @@ public abstract class TiabItemMixin {
         return InteractionResult.SUCCESS;
     }
 }
+

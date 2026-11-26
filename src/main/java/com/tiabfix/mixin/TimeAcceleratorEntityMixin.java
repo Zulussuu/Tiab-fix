@@ -150,7 +150,7 @@ public abstract class TimeAcceleratorEntityMixin extends Entity {
                     (BlockEntityType<BlockEntity>) targetBlockEntity.getType());
         }
 
-        unlockEnergyInput(level, pos);
+
 
         for (int i = 0; i < getTimeRate(); i++) {
             blockState = level.getBlockState(pos);
@@ -159,7 +159,7 @@ public abstract class TimeAcceleratorEntityMixin extends Entity {
             } else if (targetTicker != null) {
                 targetTicker.tick(level, pos, blockState, targetBlockEntity);
             } else if (blockState.isRandomlyTicking()) {
-                blockState.randomTick(level, pos, level.getRandom());
+                if (com.tiabfix.config.TiabFixConfig.enableCropAcceleration || level.random.nextInt(1365) == 0) blockState.randomTick(level, pos, level.getRandom());
             }
         }
 
@@ -171,3 +171,5 @@ public abstract class TimeAcceleratorEntityMixin extends Entity {
         ci.cancel();
     }
 }
+
+

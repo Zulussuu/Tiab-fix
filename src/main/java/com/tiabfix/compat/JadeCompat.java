@@ -28,9 +28,9 @@ public class JadeCompat implements IWailaPlugin, IEntityComponentProvider {
         Entity entity = accessor.getEntity();
         var data = TiabClientOverlay.CLIENT_ENTITIES.get(entity.getId());
 
-        if (data != null && data.timeRate > 1) {
+        if (data != null && data.timeRate > 0) {
             tooltip.add(Component.literal("Acceleration Rate: ").withStyle(ChatFormatting.GRAY)
-                    .append(Component.literal("x" + data.timeRate).withStyle(ChatFormatting.WHITE)));
+                    .append(Component.literal("x" + (data.timeRate * 2)).withStyle(ChatFormatting.WHITE)));
             int seconds = data.remainingTicks / 20;
             tooltip.add(Component.literal("Acceleration Time Remaining: ").withStyle(ChatFormatting.GRAY)
                     .append(Component.literal(seconds + "s").withStyle(ChatFormatting.WHITE)));
@@ -42,3 +42,4 @@ public class JadeCompat implements IWailaPlugin, IEntityComponentProvider {
         return ENTITY_ACCEL;
     }
 }
+

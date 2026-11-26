@@ -27,9 +27,9 @@ public class TOPCompat implements IProbeInfoEntityProvider, Function<ITheOneProb
     public void addProbeEntityInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, Entity entity,
             IProbeHitEntityData data) {
         var accelData = TiabClientOverlay.CLIENT_ENTITIES.get(entity.getId());
-        if (accelData != null && accelData.timeRate > 1) {
+        if (accelData != null && accelData.timeRate > 0) {
             probeInfo.text(Component.literal("Acceleration Rate: ").withStyle(ChatFormatting.GRAY)
-                    .append(Component.literal("x" + accelData.timeRate).withStyle(ChatFormatting.WHITE)));
+                    .append(Component.literal("x" + (accelData.timeRate * 2)).withStyle(ChatFormatting.WHITE)));
 
             int seconds = accelData.remainingTicks / 20;
             probeInfo.text(Component.literal("Acceleration Time Remaining: ").withStyle(ChatFormatting.GRAY)
@@ -37,3 +37,4 @@ public class TOPCompat implements IProbeInfoEntityProvider, Function<ITheOneProb
         }
     }
 }
+
